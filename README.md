@@ -1,5 +1,19 @@
 ## websockify: WebSockets support for any application/server
 
+### Local integration (investments workspace)
+
+This checkout is used as a **container image** for WebSocket proxying (noVNC-style stacks).
+
+- **[Dockerfile](Dockerfile):** multi-stage build (`python:3-alpine`): builder runs **`python3 setup.py sdist`**, runner **`pip install`** the sdist, installs **`netcat-openbsd`** for healthchecks, **`WORKDIR /opt/websockify`**, **`ENTRYPOINT`** = **`websockify`**, exposes **80** and **443**, default **`CMD`** is **`--help`** (override in Compose).
+- **`websockify-tws`** (ops compose): **noVNC** bridge to **Interactive Brokers TWS**’s VNC (**`tws:5900`**) so you can use the TWS GUI from a browser (e.g. host port **6080**).
+- **`websockify-pp-ui`**: **noVNC** bridge to the **Portfolio Performance RCP UI** service **`pp-ui`** (**`pp-ui:5900`**) — same **Portfolio Performance fork** as **`pp-api`**, different **`RUN_MODE`** (desktop UI vs HTTP API); e.g. host **6081**.
+- **CI:** [.github/workflows/build_and_push.yaml](.github/workflows/build_and_push.yaml) builds/pushes the image (GHCR); ops pins it via **`images.lock`**.
+- Compose **`command:`** / ports for each sidecar: **[ops/envs/prod/compose.yml](../ops/envs/prod/compose.yml)**.
+
+Upstream documentation continues below. Workspace map: **[README.md](../README.md)** / **[AGENTS.md](../AGENTS.md)**.
+
+---
+
 websockify was formerly named wsproxy and was part of the
 [noVNC](https://github.com/novnc/noVNC) project.
 
